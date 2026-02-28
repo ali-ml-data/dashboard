@@ -98,7 +98,7 @@ with tab1:
     ax.set_xlabel("")
     st.pyplot(fig)
 
-    st.info("tren untungper periode")
+    st.info("tren untung per periode")
 
 # ===============================
 # TAB 2 — PRODUCT
