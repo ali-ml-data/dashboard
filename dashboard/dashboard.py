@@ -26,10 +26,8 @@ def load_data(path):
     return df
 
 df = load_data(file_path)
-st.write("Kolom yang ada di dataset:")
-st.write(df.columns.tolist())
 
-st.title("🇧🇷 Brazilian E-Commerce Analytics")
+st.title("analisis bisnis e-commerce")
 
 # ===============================
 # SIDEBAR FILTER
