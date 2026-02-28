@@ -177,9 +177,9 @@ with tab4:
     else:
         data_serlok = filtered_df[required_cols].dropna()
 
-    if data_serlok.empty:
-        st.warning("Tidak ada data lokasi setelah filter diterapkan.")
-    else:
+        if data_serlok.empty:
+            st.warning("Tidak ada data lokasi setelah filter diterapkan.")
+        else:
             m = folium.Map(
                 location=[-14.2350, -51.9253],
                 zoom_start=4,
@@ -187,14 +187,13 @@ with tab4:
             )
 
             HeatMap(
-                data=geo_data.values.tolist(),
+                data=data_serlok.values.tolist(),  # jangan geo_data
                 radius=8,
                 blur=15,
                 min_opacity=0.4
             ).add_to(m)
 
             st_folium(m, width=900, height=600)
-
-        st.caption("serlokan pelanggan")
-
+            st.caption("serlokan pelanggan")
+            
 st.caption("©Dashboard gw nih bjir")
