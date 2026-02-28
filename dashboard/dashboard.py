@@ -164,21 +164,36 @@ with tab3:
 # ===============================
 # TAB 4 — GEOSPATIAL
 # ===============================
-with tab4:
-    st.subheader("Customer Distribution Heatmap")
+from streamlit_folium import st_folium
+from folium.plugins import HeatMap
 
-    if "geolocation_lat" not in filtered_df.columns:
+with tab4:
+    st.subheader("🗺️ distribusi pembeli Heatmap")
+
+    required_cols = ["geolocation_lat", "geolocation_lng"]
+
+    if not all(col in filtered_df.columns for col in required_cols):
         st.error("Kolom geolocation_lat & geolocation_lng tidak ditemukan di dataset.")
     else:
-        geo_data = filtered_df[["geolocation_lat", "geolocation_lng"]].dropna()
+        data_serlok = filtered_df[required_cols].dropna()
 
         if geo_data.empty:
             st.warning("Tidak ada data lokasi setelah filter diterapkan.")
         else:
-            m = folium.Map(location=[-14.2350, -51.9253], zoom_start=4)
-            HeatMap(geo_data.values.tolist(), radius=8).add_to(m)
+            m = folium.Map(
+                location=[-14.2350, -51.9253],
+                zoom_start=4,
+                tiles="CartoDB positron"
+            )
 
-            components.html(m._repr_html_(), height=600)
+            HeatMap(
+                data=geo_data.values.tolist(),
+                radius=8,
+                blur=15,
+                min_opacity=0.4
+            ).add_to(m)
+
+            st_folium(m, width=900, height=600)
 
         st.caption("serlokan pelanggan")
 
