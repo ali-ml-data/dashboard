@@ -177,9 +177,9 @@ with tab4:
     else:
         data_serlok = filtered_df[required_cols].dropna()
 
-        if geo_data.empty:
-            st.warning("Tidak ada data lokasi setelah filter diterapkan.")
-        else:
+    if data_serlok.empty:
+        st.warning("Tidak ada data lokasi setelah filter diterapkan.")
+    else:
             m = folium.Map(
                 location=[-14.2350, -51.9253],
                 zoom_start=4,
