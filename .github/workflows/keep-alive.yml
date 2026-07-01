@@ -11,37 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install Playwright
+      - name: Empty commit to wake app
         run: |
-          pip install playwright
-          playwright install chromium
-
-      - name: Wake up Streamlit app
-        run: |
-          python - <<'EOF'
-          import asyncio
-          from playwright.async_api import async_playwright
-
-          async def wake():
-              async with async_playwright() as p:
-                  browser = await p.chromium.launch()
-                  page = await browser.new_page()
-                  await page.goto("https://dashboard-ggts9v4ymhychvxjczousd.streamlit.app/")
-                  await page.wait_for_timeout(8000)
-                  await page.screenshot(path="screenshot.png", full_page=True)
-                  print(await page.content())
-                  await browser.close()
-
-          asyncio.run(wake())
-          EOF
-
-      - name: Upload screenshot
-        uses: actions/upload-artifact@v3
-        with:
-          name: streamlit-screenshot
-          path: screenshot.png
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git commit --allow-empty -m "keep alive"
+          git push
