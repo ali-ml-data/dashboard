@@ -1,26 +1,4 @@
-name: Keep Streamlit Awake
-on:
-  schedule:
-    - cron: '0 */6 * * *'
-  workflow_dispatch:
-
-jobs:
-  wake:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install Playwright
-        run: |
-          pip install playwright
-          playwright install chromium
-
-      - name: Wake up Streamlit app
+- name: Wake up Streamlit app
         run: |
           python - <<'EOF'
           import asyncio
@@ -31,15 +9,16 @@ jobs:
                   browser = await p.chromium.launch()
                   page = await browser.new_page()
                   await page.goto("https://dashboard-ggts9v4ymhychvxjczousd.streamlit.app/")
-                  await page.wait_for_timeout(5000)
-                  try:
-                      btn = page.get_by_role("button", name="Yes, get this app back up!")
-                      await btn.click()
-                      await page.wait_for_timeout(10000)
-                      print("Clicked wake button")
-                  except:
-                      print("App already awake")
+                  await page.wait_for_timeout(8000)
+                  await page.screenshot(path="screenshot.png", full_page=True)
+                  print(await page.content())
                   await browser.close()
 
           asyncio.run(wake())
           EOF
+
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v3
+        with:
+          name: streamlit-screenshot
+          path: screenshot.png
