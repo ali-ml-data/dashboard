@@ -58,11 +58,12 @@ filtered_df = df[
 # ===============================
 # TABS
 # ===============================
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 Overview",
     "📦 Product Analysis",
     "👥 Customer & RFM",
-    "🗺️ Geospatial"
+    "🗺️ Geospatial",
+    "📈 Forecast"
 ])
 
 # ===============================
@@ -195,5 +196,62 @@ with tab4:
 
             st_folium(m, width=900, height=600)
             st.caption("serlokan pelanggan")
+            
+st.caption("©Dashboard gw nih bjir")
+
+
+# ===============================
+# TAB 5 — FORECAST
+# ===============================
+with tab5:
+    st.subheader("📈 Revenue Forecast")
+
+    forecast_path = os.path.join(BASE_DIR, "forecast_data.csv")
+
+    if not os.path.exists(forecast_path):
+        st.warning("Data forecast belum tersedia. Pastikan file forecast_data.csv sudah di-generate dan diupload.")
+    else:
+        forecast_df = pd.read_csv(forecast_path)
+        forecast_df["ds"] = pd.to_datetime(forecast_df["ds"])
+
+        pilihan = ["TOTAL"] + sorted(
+            forecast_df[forecast_df["kategori"] != "TOTAL"]["kategori"].unique().tolist()
+        )
+        kategori_pilih = st.selectbox("Pilih kategori", pilihan)
+
+        data_aktual = df.set_index("order_purchase_timestamp")
+
+        if kategori_pilih == "TOTAL":
+            aktual_plot = data_aktual["untung"].resample("ME").sum()
+        else:
+            aktual_plot = (
+                data_aktual[data_aktual["product_category_name_english"] == kategori_pilih]["untung"]
+                .resample("ME").sum()
+            )
+
+        forecast_plot = forecast_df[forecast_df["kategori"] == kategori_pilih]
+
+        if forecast_plot.empty:
+            st.info(f"Belum ada data forecast untuk kategori: {kategori_pilih}")
+        else:
+            fig, ax = plt.subplots(figsize=(10, 5))
+            ax.plot(aktual_plot.index, aktual_plot.values, label="Actual")
+            ax.plot(forecast_plot["ds"], forecast_plot["yhat"], linestyle="--", marker="o", label="Forecast")
+
+            if "yhat_lower" in forecast_plot.columns and forecast_plot["yhat_lower"].notna().any():
+                ax.fill_between(
+                    forecast_plot["ds"],
+                    forecast_plot["yhat_lower"],
+                    forecast_plot["yhat_upper"],
+                    alpha=0.2,
+                    label="Confidence Interval"
+                )
+
+            ax.set_title(f"Revenue Forecast - {kategori_pilih}")
+            ax.set_ylabel("Revenue")
+            ax.legend()
+            st.pyplot(fig)
+
+        st.caption("Forecast dihitung dari seluruh data historis, tidak terpengaruh filter sidebar.")
             
 st.caption("©Dashboard gw nih bjir")
