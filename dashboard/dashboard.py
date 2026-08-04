@@ -251,6 +251,6 @@ with tab5:
             ax.legend()
             st.pyplot(fig)
 
-        st.caption("Forecast dihitung dari seluruh data historis, tidak terpengaruh filter sidebar.")
+        st.caption("Prediksi jaya jaya jaya")
             
 st.caption("©Dashboard gw nih bjir")
