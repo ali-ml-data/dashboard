@@ -197,7 +197,6 @@ with tab4:
             st_folium(m, width=900, height=600)
             st.caption("serlokan pelanggan")
             
-st.caption("©Dashboard gw nih bjir")
 
 
 # ===============================
