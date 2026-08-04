@@ -165,6 +165,8 @@ with tab3:
 # ===============================
 # TAB 4 — GEOSPATIAL
 # ===============================
+with tab4:
+    st.write("Hello")
 from streamlit_folium import st_folium
 from folium.plugins import HeatMap
 
